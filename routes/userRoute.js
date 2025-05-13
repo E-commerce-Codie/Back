@@ -16,8 +16,7 @@ router.put(
   "/updateMyData",
   authController.protect,
   userController.updateMyData,
-  userValidator.updateUserValidator,
-  userController.resizeImage
+  userValidator.updateUserValidator
 );
 
 router.put(
