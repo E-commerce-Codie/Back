@@ -15,7 +15,7 @@ router
   )
   .post(
     authController.protect,
-    authController.allowedTo("user"),
+    authController.allowedTo("customer"),
     reviewController.setRoutes,
     reviewValidator.createReviewValidator,
     reviewController.createReview
@@ -26,7 +26,7 @@ router
   .get(reviewValidator.getReviewValidator, reviewController.getSpecificReview)
   .put(
     authController.protect,
-    authController.allowedTo("user"),
+    authController.allowedTo("customer"),
     reviewValidator.updateReviewValidator,
     reviewController.updateReview
   )

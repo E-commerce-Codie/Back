@@ -1,123 +1,61 @@
-const Product = require("../models/productModel");
+const sharp = require("sharp");
 const asyncHandler = require("express-async-handler");
-const ApiError = require("../utils/apiError");
-const ApiFeatures = require("../utils/apiFeatures");
+const path = require("path");
+const fs = require("fs");
+const { v4: uuidv4 } = require("uuid");
+const controllerHandler = require("./controllerHandler");
+const productModel = require("../models/productModel");
+const uploadImages = require("../middlewares/uploadImageMiddleware");
 
-exports.getProducts = asyncHandler(async (req, res, nxt) => {
-  const apiFeature = new ApiFeatures(Product.find(), req.query)
-    .filter()
-    .sort()
-    .fieldsLimit()
-    .search();
+exports.uploadProductImages = uploadImages.uploadMultipleImage();
 
-  const countDocuments = await Product.countDocuments();
-
-  await apiFeature.paginate(countDocuments);
-
-  const { mongooseQuery, paginationResult } = apiFeature;
-
-  const products = await mongooseQuery;
-
-  res.status(200).json({
-    status: "Success",
-    results: products.length,
-    paginationResult,
-    data: products,
-  });
-});
-
-exports.createProduct = asyncHandler(async (req, res, nxt) => {
-  const {
-    title,
-    description,
-    quantity,
-    sold,
-    price,
-    priceAfterDiscount,
-    colors,
-    imageCover,
-    images,
-    category,
-    ratingsAverage,
-    ratingsQuantity,
-    currency,
-  } = req.body;
-
-  const product = await Product.create({
-    title,
-    description,
-    quantity,
-    sold,
-    price,
-    priceAfterDiscount,
-    colors,
-    imageCover,
-    images,
-    category,
-    ratingsAverage,
-    ratingsQuantity,
-    currency,
-  });
-
-  res.status(201).json({ data: product });
-});
-
-exports.getProduct = asyncHandler(async (req, res, nxt) => {
-  const { id } = req.params;
-
-  const product = await Product.findById(id);
-  if (!product) {
-    return nxt(new ApiError(`No product for this id ${id}`, 404));
+exports.resizeImage = asyncHandler(async (req, res, next) => {
+  // ImageCover
+  if (req.files) {
+    if (req.files.imageCover) {
+      const imageCoverFilename = `product-${uuidv4()}-${Date.now()}-Cover.jpeg`;
+      const savePath = path.resolve("uploads", "products");
+      if (!fs.existsSync(savePath)) {
+        fs.mkdirSync(savePath, { recursive: true });
+      }
+      await sharp(req.files.imageCover[0].buffer)
+        .resize(2000, 1330)
+        .toFormat("jpeg")
+        .jpeg({ quality: 95 })
+        .toFile(path.resolve(savePath, imageCoverFilename));
+      //save image into database
+      req.body.imageCover = imageCoverFilename;
+    } else if (req.files.image) {
+      req.body.images = [];
+      await Promise.all(
+        req.files.images.map(
+          asyncHandler(async (image, index) => {
+            const imagesFilename = `product-${uuidv4()}-${Date.now()}-${index + 1}.jpeg`;
+            const savePath = path.resolve("uploads", "products");
+            if (!fs.existsSync(savePath)) {
+              fs.mkdirSync(savePath, { recursive: true });
+            }
+            await sharp(image.buffer)
+              .resize(1024, 800)
+              .toFormat("jpeg")
+              .jpeg({ quality: 95 })
+              .toFile(path.resolve(savePath, imagesFilename));
+            //save image into database
+            req.body.images.push(imagesFilename);
+          })
+        )
+      );
+    }
   }
-  res.status(200).json({ data: product });
+  next();
 });
 
-exports.updateProduct = asyncHandler(async (req, res, nxt) => {
-  const { id } = req.params;
-  const {
-    title,
-    description,
-    quantity,
-    sold,
-    price,
-    colors,
-    imageCover,
-    images,
-    category,
-    ratingsAverage,
-    ratingsQuantity,
-    currency,
-  } = req.body;
-  const product = await Product.findByIdAndUpdate(
-    id,
-    {
-      title,
-      description,
-      quantity,
-      sold,
-      price,
-      colors,
-      imageCover,
-      images,
-      category,
-      ratingsAverage,
-      ratingsQuantity,
-      currency,
-    },
-    { new: true }
-  );
-  if (!product) {
-    return nxt(new ApiError(`No product for this id ${id}`, 404));
-  }
-  res.status(200).json({ data: product });
-});
+exports.createProduct = controllerHandler.create(productModel);
 
-exports.deleteProduct = asyncHandler(async (req, res, nxt) => {
-  const { id } = req.params;
-  const product = await Product.findByIdAndDelete(id);
-  if (!product) {
-    return nxt(new ApiError(`No product for this id ${id}`, 404));
-  }
+exports.getSpecificProduct = controllerHandler.getSpecific(productModel);
 
-  res.status(204).send();
-});
+exports.getProducts = controllerHandler.getAll(productModel, "product");
+
+exports.updateProduct = controllerHandler.update(productModel);
+
+exports.deleteProduct = controllerHandler.delete(productModel);

@@ -1,44 +1,40 @@
 const express = require("express");
-const {
-  createProduct,
-  getProduct,
-  getProducts,
-  deleteProduct,
-  updateProduct,
-} = require("../controller/productController");
-const {
-  createProductValidator,
-  getProductValidator,
-  updateProductValidator,
-  deleteProductValidator,
-} = require("../validators/productValidator");
-const authController = require("../Controller/authController");
+const productController = require("../Controller/productController");
+
 const router = express.Router();
+const productValidator = require("../validators/productValidator");
+const authController = require("../Controller/authController");
+const reviewRoute = require("./reviewRoute");
+
+router.use("/:productId/reviews", reviewRoute);
 
 router
   .route("/")
+  .get(productController.getProducts)
   .post(
     authController.protect,
-    authController.allowedTo("admin", "seller"),
-    createProductValidator,
-    createProduct
-  )
-  .get(getProducts);
+    authController.allowedTo("admin"),
+    productValidator.createProductValidator,
+    productController.createProduct
+  );
 
 router
   .route("/:id")
-  .get(getProductValidator, getProduct)
+  .get(
+    productValidator.getProductValidator,
+    productController.getSpecificProduct
+  )
   .put(
     authController.protect,
-    authController.allowedTo("admin", "seller"),
-    updateProductValidator,
-    updateProduct
+    authController.allowedTo("admin"),
+    productValidator.updateProductValidator,
+    productController.updateProduct
   )
   .delete(
     authController.protect,
     authController.allowedTo("admin"),
-    deleteProductValidator,
-    deleteProduct
+    productValidator.deleteProductValidator,
+    productController.deleteProduct
   );
 
 module.exports = router;

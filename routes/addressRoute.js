@@ -9,12 +9,12 @@ router
   .route("/")
   .get(
     authController.protect,
-    authController.allowedTo("user"),
+    authController.allowedTo("customer"),
     addressController.getAllAddresses
   )
   .post(
     authController.protect,
-    authController.allowedTo("user"),
+    authController.allowedTo("customer"),
     addressValidator.addAddressValidator,
     addressController.addAddress
   );
@@ -23,7 +23,7 @@ router
   .route("/:id")
   .delete(
     authController.protect,
-    authController.allowedTo("user"),
+    authController.allowedTo("customer"),
     addressValidator.removeAddressValidator,
     addressController.removeAddress
   );

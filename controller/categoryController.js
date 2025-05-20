@@ -1,45 +1,38 @@
-const Category = require("../models/categoryModel");
-const ApiError = require("../utils/apiError");
+const sharp = require("sharp");
 const asyncHandler = require("express-async-handler");
+const path = require("path");
+const fs = require("fs");
+const { v4: uuidv4 } = require("uuid");
+const controllerHandler = require("./controllerHandler");
+const uploadImage = require("../middlewares/uploadImageMiddleware");
+const categoryModel = require("../models/categoryModel");
 
-exports.createCategory = asyncHandler(async (req, res, nxt) => {
-  const category = await Category.create(req.body);
-  res.status(201).json({ data: category });
-});
+exports.uploadCategoryImage = uploadImage.uploadSingleImage("image", "name");
 
-exports.getCategories = asyncHandler(async (req, res, nxt) => {
-  const categories = await Category.find({});
-  res.status(200).json({ results: categories.length, data: categories });
-});
-
-exports.getCategory = asyncHandler(async (req, res, nxt) => {
-  const { id } = req.params;
-  const category = await Category.findById(id);
-
-  if (!category) {
-    return nxt(new ApiError(`No category for this id ${id}`, 404));
+exports.resizeImage = asyncHandler(async (req, res, next) => {
+  if (req.file) {
+    const filename = `category-${uuidv4()}-${Date.now()}.jpeg`;
+    const savePath = path.resolve("uploads", "categories");
+    if (!fs.existsSync(savePath)) {
+      fs.mkdirSync(savePath, { recursive: true });
+    }
+    await sharp(req.file.buffer)
+      .resize(600, 600)
+      .toFormat("jpeg")
+      .jpeg({ quality: 95 })
+      .toFile(path.resolve(savePath, filename));
+    //save image into database
+    req.body.image = filename;
   }
-  res.status(200).json({ data: category });
+  next();
 });
 
-exports.updateCategory = asyncHandler(async (req, res, nxt) => {
-  const { id } = req.params;
-  const category = await Category.findByIdAndUpdate(id, req.body, {
-    new: true,
-  });
+exports.createCategory = controllerHandler.create(categoryModel);
 
-  if (!category) {
-    return nxt(new ApiError(`No category for this id ${id}`, 404));
-  }
-  res.status(200).json({ data: category });
-});
+exports.getSpecificCategory = controllerHandler.getSpecific(categoryModel);
 
-exports.deleteCategory = asyncHandler(async (req, res, nxt) => {
-  const { id } = req.params;
-  const category = await Category.findByIdAndDelete(id);
+exports.getCategories = controllerHandler.getAll(categoryModel);
 
-  if (!category) {
-    return nxt(new ApiError(`No category for this id ${id}`, 404));
-  }
-  res.status(204).send();
-});
+exports.updateCategory = controllerHandler.update(categoryModel);
+
+exports.deleteCategory = controllerHandler.delete(categoryModel);

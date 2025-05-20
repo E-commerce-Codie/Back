@@ -1,30 +1,30 @@
 const { check } = require("express-validator");
-const Category = require("../models/categoryModel");
-const validatorMiddleware = require("../middleWares/validatorMiddleware");
 const slugify = require("slugify");
-
-exports.getProductValidator = [
-  check("id").isMongoId().withMessage("Invalid ID Format...!!!"),
-  validatorMiddleware,
-];
+const validatorMiddleware = require("../middleWares/validatorMiddleware");
+const categoryModel = require("../models/categoryModel");
+const productController = require("../Controller/productController");
+const productModel = require("../models/productModel");
 
 exports.createProductValidator = [
   check("title")
-    .notEmpty()
-    .withMessage("Product Title is required..!!")
     .isLength({ min: 3 })
-    .withMessage("Product Title must be at least 3 characters..!!")
-    .isLength({ max: 100 })
-    .withMessage("Product title must not exceed 100 characters...!!")
-    .custom((val, { req }) => (req.body.slug = slugify(val))),
+    .withMessage("must be at least 3 chars")
+    .notEmpty()
+    .withMessage("Product required")
+    .custom((value, { req }) => {
+      if (req.body.title) {
+        req.body.slug = slugify(value);
+      }
+      return true;
+    }),
   check("description")
     .notEmpty()
-    .withMessage("Product Description is required..!!")
-    .isLength({ min: 20 })
-    .withMessage("Product Description must be at least 20 characters..!!"),
+    .withMessage("Product description is required")
+    .isLength({ max: 2000 })
+    .withMessage("Too long description"),
   check("quantity")
     .notEmpty()
-    .withMessage("Product quantity is required..!!")
+    .withMessage("Product quantity is required")
     .isNumeric()
     .withMessage("Product quantity must be a number"),
   check("sold")
@@ -37,79 +37,82 @@ exports.createProductValidator = [
     .isNumeric()
     .withMessage("Product price must be a number")
     .isLength({ max: 32 })
-    .withMessage("To long price"),
+    .withMessage("Too long price")
+    .customSanitizer((value) => {
+      return Math.ceil(value / 5) * 5;
+    }),
   check("priceAfterDiscount")
     .optional()
     .isNumeric()
     .withMessage("Product priceAfterDiscount must be a number")
     .toFloat()
-    .custom((val, { req }) => {
-      if (req.body.price <= val) {
-        throw new Error("PriceAfterDiscount must be lower than price");
+    .customSanitizer((value) => {
+      return Math.ceil(value / 5) * 5;
+    })
+    .custom((value, { req }) => {
+      if (req.body.price <= value) {
+        return Promise.reject({
+          message: "Product price must be lower than original price",
+          statusCode: 404,
+        });
       }
       return true;
     }),
   check("colors")
     .optional()
     .isArray()
-    .withMessage("availableColors should be array of string"),
-  check("imageCover").notEmpty().withMessage("Product imageCover is required"),
-  check("images")
-    .optional()
-    .isArray()
-    .withMessage("images should be array of string"),
+    .withMessage("Colors should be array of string"),
+
   check("category")
     .notEmpty()
     .withMessage("Product must be belong to a category")
     .isMongoId()
-    .withMessage("Invalid ID Format..!!")
-    .custom((categoryId) =>
-      Category.findById(categoryId).then((category) => {
-        if (!category) {
-          return Promise.reject(
-            new Error(`No Category for this id : ${categoryId}`)
-          );
-        }
-      })
-    ),
+    .withMessage("Invalid ID formate")
+    .custom(async (categoryId) => {
+      const categoryExists = await categoryModel.findById(categoryId);
+      if (!categoryExists) {
+        return Promise.reject({
+          message: `No category found with this ID: ${categoryId}`,
+          statusCode: 404,
+        });
+      }
+    }),
   check("ratingsAverage")
     .optional()
     .isNumeric()
     .withMessage("ratingsAverage must be a number")
-    .isFloat({ min: 1 })
+    .isLength({ min: 1 })
     .withMessage("Rating must be above or equal 1.0")
-    .isFloat({ max: 5 })
+    .isLength({ max: 5 })
     .withMessage("Rating must be below or equal 5.0"),
   check("ratingsQuantity")
     .optional()
     .isNumeric()
     .withMessage("ratingsQuantity must be a number"),
-  check("currency")
-    .notEmpty()
-    .withMessage("Product currency is required")
-    .isIn(["USD", "EGP"])
-    .withMessage("Currency must be one of EGP or USD ."),
   validatorMiddleware,
 ];
 
-exports.deleteProductValidator = [
-  check("id").isMongoId().withMessage("Invalid ID Format...!!!"),
+exports.getProductValidator = [
+  check("id").isMongoId().withMessage("Invalid ID format"),
   validatorMiddleware,
 ];
 
 exports.updateProductValidator = [
-  check("id").isMongoId().withMessage("Invalid ID Format...!!!"),
+  check("id").isMongoId().withMessage("Invalid ID format"),
   check("title")
-    .optional()
     .isLength({ min: 3 })
-    .withMessage("Product Title must be at least 3 characters..!!")
-    .isLength({ max: 100 })
-    .withMessage("Product title must not exceed 100 characters...!!")
-    .custom((val, { req }) => (req.body.slug = slugify(val))),
+    .withMessage("must be at least 3 chars")
+    .optional()
+    .custom((value, { req }) => {
+      if (req.body.title) {
+        req.body.slug = slugify(value);
+      }
+      return true;
+    }),
   check("description")
     .optional()
-    .isLength({ min: 20 })
-    .withMessage("Product Description must be at least 20 characters..!!"),
+    .isLength({ max: 2000 })
+    .withMessage("Too long description"),
   check("quantity")
     .optional()
     .isNumeric()
@@ -123,12 +126,34 @@ exports.updateProductValidator = [
     .isNumeric()
     .withMessage("Product price must be a number")
     .isLength({ max: 32 })
-    .withMessage("To long price"),
+    .withMessage("Too long price")
+    .customSanitizer((value) => {
+      return Math.ceil(value / 5) * 5;
+    }),
+  check("priceAfterDiscount")
+    .optional()
+    .isNumeric()
+    .withMessage("Product priceAfterDiscount must be a number")
+    .toFloat()
+    .customSanitizer((value) => {
+      return Math.ceil(value / 5) * 5;
+    })
+    .custom(async (value, { req }) => {
+      const product = await productModel.findById(req.params.id);
+      if (
+        req.body.priceAfterDiscount &&
+        req.body.priceAfterDiscount >= product.price
+      ) {
+        return Promise.reject({
+          message: `priceAfterDiscount cannot be greater than or equal to the original price ${product.price}`,
+          statusCode: 404,
+        });
+      }
+    }),
   check("colors")
     .optional()
     .isArray()
-    .withMessage("availableColors should be array of string"),
-  check("imageCover").optional(),
+    .withMessage("Colors should be array of string"),
   check("images")
     .optional()
     .isArray()
@@ -136,31 +161,33 @@ exports.updateProductValidator = [
   check("category")
     .optional()
     .isMongoId()
-    .withMessage("Invalid ID Format..!!")
-    .custom((categoryId) =>
-      Category.findById(categoryId).then((category) => {
-        if (!category) {
-          return Promise.reject(
-            new Error(`No Category for this id : ${categoryId}`)
-          );
-        }
-      })
-    ),
+    .withMessage("Invalid ID formate")
+    .custom(async (categoryId) => {
+      const categoryExists = await categoryModel.findById(categoryId);
+      if (!categoryExists) {
+        return Promise.reject({
+          message: `No category found with this ID: ${categoryId}`,
+          statusCode: 404,
+        });
+      }
+    }),
+
   check("ratingsAverage")
     .optional()
     .isNumeric()
     .withMessage("ratingsAverage must be a number")
-    .isFloat({ min: 1 })
+    .isLength({ min: 1 })
     .withMessage("Rating must be above or equal 1.0")
-    .isFloat({ max: 5 })
+    .isLength({ max: 5 })
     .withMessage("Rating must be below or equal 5.0"),
   check("ratingsQuantity")
     .optional()
     .isNumeric()
     .withMessage("ratingsQuantity must be a number"),
-  check("currency")
-    .optional()
-    .isIn(["USD", "EGP"])
-    .withMessage("Currency must be one of EGP or USD ."),
+  validatorMiddleware,
+];
+
+exports.deleteProductValidator = [
+  check("id").isMongoId().withMessage("Invalid ID formate"),
   validatorMiddleware,
 ];

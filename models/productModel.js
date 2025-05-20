@@ -1,22 +1,33 @@
+const dotenv = require("dotenv");
+
+dotenv.config({ path: "config.env" });
+
 const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true,
+      required: [true, "product title is required"],
       trim: true,
-      minLength: [3, "Too short product title"],
-      maxLength: [100, "Too long product title"],
+      minlength: [3, "Too short product name"],
+      maxlength: [100, "Too long product name"],
     },
     slug: {
       type: String,
+      required: true,
       lowercase: true,
     },
     description: {
       type: String,
-      required: [true, "Product description is required"],
-      minLength: [20, "Too short product description"],
+      required: [true, "product description is required"],
+      minlength: [10, "Too short product description"],
+      maxlength: [500, "Too long product description"],
+    },
+    quantity: {
+      type: Number,
+      required: [true, "product quantity is required"],
+      min: [1, "Quantity must be at least 1"],
     },
     sold: {
       type: Number,
@@ -24,51 +35,82 @@ const productSchema = new mongoose.Schema(
     },
     price: {
       type: Number,
-      required: [true, "Product price is required"],
+      required: [true, "product price is required"],
       trim: true,
-      max: [20000000, "Too long product price"],
+      max: [250000, "Too long product Price"],
+    },
+    discountPercentage: {
+      type: Number,
+      trim: true,
+      min: [0, "Too short product discountPercentage"],
+      max: [100, "Too long product discountPercentage"],
+      default: 0,
     },
     priceAfterDiscount: {
       type: Number,
+      trim: true,
+      max: [2000000, "Too long product PriceAfterDiscount"],
+      default: 0,
     },
-    colors: [String],
+    colors: {
+      type: [String],
+    },
     imageCover: {
       type: String,
-      required: [true, "Product Image cover is required"],
+      required: [true, "Image cover image is required"],
     },
-    images: [String],
+    images: {
+      type: [String],
+    },
     category: {
       type: mongoose.Schema.ObjectId,
       ref: "Category",
-      required: [true, "Product must be belong to category"],
+      required: [true, "Product must belong to main category"],
     },
-    currency: {
-      type: String,
-      required: true,
-      enum: ["USD", "EGP", "EUR"], // List of allowed currencies
-      default: "EGP",
-    },
-
     ratingsAverage: {
       type: Number,
-      min: [1, "Rating must be above or equal 1.0"],
-      max: [5, "Rating must be below or equal 5.0"],
+      min: [1, "rating must be above or equal 1"],
+      max: [5, "rating must be below or equal 5"],
     },
-
     ratingsQuantity: {
       type: Number,
       default: 0,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+  }
 );
 
-productSchema.pre(/^find/, function (nxt) {
+productSchema.pre("save", function (next) {
+  if (this.price || this.discountPercentage) {
+    const discounted = (this.priceAfterDiscount =
+      this.price * (1 - this.discountPercentage / 100));
+    this.priceAfterDiscount = Math.ceil(discounted);
+  }
+  next();
+});
+
+productSchema.virtual("reviews", {
+  ref: "Review",
+  localField: "_id",
+  foreignField: "product",
+});
+
+productSchema.pre(/^find/, function (next) {
   this.populate({
     path: "category",
     select: "name -_id",
   });
-  nxt();
+  this.populate({
+    path: "reviews",
+    select: "title -_id",
+  });
+  next();
 });
 
-module.exports = mongoose.model("Product", productSchema);
+const productModel = mongoose.model("Product", productSchema);
+
+module.exports = productModel;

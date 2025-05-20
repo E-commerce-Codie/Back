@@ -1,43 +1,37 @@
 const express = require("express");
-const {
-  createCategory,
-  getCategories,
-  getCategory,
-  updateCategory,
-  deleteCategory,
-} = require("../controller/categoryController");
-const {
-  createCategoryValidator,
-  getCategoryValidator,
-  deleteCategoryValidator,
-  updateCategoryValidator,
-} = require("../validators/categoryValidator");
+const categoryController = require("../Controller/categoryController");
 const authController = require("../Controller/authController");
+
 const router = express.Router();
+const categoryValidator = require("../validators/categoryValidator");
 
 router
   .route("/")
+  .get(categoryController.getCategories)
   .post(
     authController.protect,
-    authController.allowedTo("admin", "seller"),
-    createCategoryValidator,
-    createCategory
-  )
-  .get(getCategories);
+    authController.allowedTo("admin"),
+    categoryValidator.createCategoryValidator,
+    categoryController.createCategory
+  );
+
 router
   .route("/:id")
-  .get(getCategoryValidator, getCategory)
-  .delete(
-    authController.protect,
-    authController.allowedTo("admin"),
-    deleteCategoryValidator,
-    deleteCategory
+  .get(
+    categoryValidator.getCategoryValidator,
+    categoryController.getSpecificCategory
   )
   .put(
     authController.protect,
-    authController.allowedTo("admin", "seller"),
-    updateCategoryValidator,
-    updateCategory
+    authController.allowedTo("admin"),
+    categoryValidator.updateCategoryValidator,
+    categoryController.updateCategory
+  )
+  .delete(
+    authController.protect,
+    authController.allowedTo("admin"),
+    categoryValidator.deleteCategoryValidator,
+    categoryController.deleteCategory
   );
 
 module.exports = router;
