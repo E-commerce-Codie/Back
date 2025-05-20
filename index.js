@@ -17,7 +17,7 @@ const dbConnection = require("./config/dataBase");
 const mountRoutes = require("./routes");
 const globalError = require("./middleWares/errorMiddleware");
 const ApiError = require("./utils/apiError");
-const controller = require("./Controller/orderController");
+const controller = require("./controller/orderController");
 // Application setup
 const app = express();
 app.set("trust proxy", 1);
