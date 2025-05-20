@@ -13,11 +13,12 @@ const { body } = require("express-validator");
 dotenv.config({ path: "config.env" });
 
 // Import files
+const controller = require("./controller/orderController");
 const dbConnection = require("./config/dataBase");
 const mountRoutes = require("./routes");
 const globalError = require("./middleWares/errorMiddleware");
 const ApiError = require("./utils/apiError");
-const controller = require("./controller/orderController");
+
 // Application setup
 const app = express();
 app.set("trust proxy", 1);
