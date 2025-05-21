@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "920618bd-4fe7-46ec-bd39-2e828e214c0c",
+		"_postman_id": "5a45c22e-797d-4dfa-9dcf-5276dc8bebe2",
 		"name": "E-Commerce WebSite",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "38670371"
@@ -38,12 +38,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/auth/signUp",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/auth/signUp",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -83,12 +81,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/auth/logIn",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/auth/logIn",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -128,12 +124,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/auth/verify-2FA",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/auth/verify-2FA",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -147,7 +141,224 @@
 			]
 		},
 		{
-			"name": "UserControl",
+			"name": "adminDashboard",
+			"item": [
+				{
+					"name": "createUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"\",\r\n    \"email\": \"\",\r\n    \"phone\": \"\",\r\n    \"password\": \"\",\r\n    \"passwordConfirmation\": \"\",\r\n    \"role\" : \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mainHost}}/api/v1/admin",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllUsers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/admin",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSpecificUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/admin/682cd24209b3cd29954d763e",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"682cd24209b3cd29954d763e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{mainHost}}/api/v1/admin/6787816668730d28fe99332f",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"6787816668730d28fe99332f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "changePassword",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"\",\r\n    \"currentPassword\":\"\",\r\n    \"newPassword\":\"\",\r\n    \"newPasswordConfirm\":\"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mainHost}}/api/v1/admin/changePassword",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"changePassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/admin/682cd24209b3cd29954d763e",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"682cd24209b3cd29954d763e"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "UserDashboard",
 			"item": [
 				{
 					"name": "getMyData",
@@ -165,12 +376,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/users/getMyData",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/users/getMyData",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -206,12 +415,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/users/updateMyData",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/users/updateMyData",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -261,12 +468,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/users/updateMyPassword",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/users/updateMyPassword",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -293,17 +498,411 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/users/deactivateMyUser",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/users/deactivateMyUser",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
 								"users",
 								"deactivateMyUser"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "affiliateDashboard",
+			"item": [
+				{
+					"name": "registerAsAffiliate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"6817dad5b106eaab680f8437\"\n}"
+						},
+						"url": {
+							"raw": "{{mainHost}}/api/v1/affiliates/register",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"affiliates",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAffiliateDashboard",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/affiliates/dashboard",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"affiliates",
+								"dashboard"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAffiliateCommissions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/affiliates/commissions",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"affiliates",
+								"commissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "trackReferralClick",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{mainHost}}/api/v1/affiliates/track-click/DCLPLF6X",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"affiliates",
+								"track-click",
+								"DCLPLF6X"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "requestCommissionPayout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"paymentMethod\": \"paypal\",\n  \"accountEmail\": \"affiliate@example.com\"\n}"
+						},
+						"url": {
+							"raw": "https://e-commerce-web-site-inky.vercel.app/api/v1/affiliates/request-payout",
+							"protocol": "https",
+							"host": [
+								"e-commerce-web-site-inky",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"affiliates",
+								"request-payout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAffiliateOrders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/affiliates/orders",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"affiliates",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "accountantDashboard",
+			"item": [
+				{
+					"name": "getAllCommissionRequests",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/accountants/commission-requests",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accountants",
+								"commission-requests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reviewCommissionRequest(Approve/Reject)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"approved\",\n  \"notes\": \"Approved by accountant\"\n}"
+						},
+						"url": {
+							"raw": "{{mainHost}}/api/v1/accountants/commission-requests/:requestId/review",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accountants",
+								"commission-requests",
+								":requestId",
+								"review"
+							],
+							"variable": [
+								{
+									"key": "requestId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "markRequestAsPaid",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/accountants/commission-requests/:requestId/pay",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accountants",
+								"commission-requests",
+								":requestId",
+								"pay"
+							],
+							"variable": [
+								{
+									"key": "requestId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAffiliateCommissionReport",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/accountants/affiliate-commissions",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accountants",
+								"affiliate-commissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPaidOrdersReport",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/accountants/paid-orders",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accountants",
+								"paid-orders"
 							]
 						}
 					},
@@ -341,12 +940,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/forgetPassword/sendResetCode",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/forgetPassword/sendResetCode",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -384,12 +981,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/forgetPassword/verifyResetCode",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/forgetPassword/verifyResetCode",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -429,12 +1024,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/forgetPassword/resetPassword",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/forgetPassword/resetPassword",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -466,21 +1059,25 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
 								}
-							}
+							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/categories",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/categories",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -496,12 +1093,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/categories?limit=1",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/categories?page=2&limit=1",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -510,8 +1105,7 @@
 							"query": [
 								{
 									"key": "page",
-									"value": "2",
-									"disabled": true
+									"value": "2"
 								},
 								{
 									"key": "limit",
@@ -528,16 +1122,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/categories/6756848f65d99ed96c70caf2",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/6756848f65d99ed96c70caf2",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
-								"categories",
 								"6756848f65d99ed96c70caf2"
 							]
 						}
@@ -570,12 +1161,10 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/6782d001ffd73b40a97c233e",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/6782d001ffd73b40a97c233e",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -601,17 +1190,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/categories/681af897371040c242b7674a",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/6782d001ffd73b40a97c233e",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
-								"categories",
-								"681af897371040c242b7674a"
+								"6782d001ffd73b40a97c233e"
 							]
 						}
 					},
@@ -638,24 +1224,66 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"\",\r\n    \"description\": \"\",\r\n    \"quantity\": \"\",\r\n    \"price\": \"\",\r\n    \"imageCover\": \"\",\r\n    \"category\": \"\",\r\n    \"currency\": \"\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "sold",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "subCategory",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "ratingsAverage",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "ratingsQuantity",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "imageCover",
+									"type": "file",
+									"src": []
 								}
-							}
+							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/products/",
-							"protocol": "http",
+							"raw": "{{mainHost}}/products/",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
-								"api",
-								"v1",
 								"products",
 								""
 							]
@@ -669,12 +1297,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/products?limit=2",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/products",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -713,7 +1339,8 @@
 								},
 								{
 									"key": "limit",
-									"value": "2"
+									"value": "2",
+									"disabled": true
 								}
 							]
 						}
@@ -726,12 +1353,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/products/679868cc96698d640e58133c",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/products/679868cc96698d640e58133c",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -798,12 +1423,10 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/products/679868cc96698d640e58133c",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/products/679868cc96698d640e58133c",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -830,246 +1453,15 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/products/6782d3955f476dc0f8065c28",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/products/6782d3955f476dc0f8065c28",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
 								"products",
 								"6782d3955f476dc0f8065c28"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "adminControl",
-			"item": [
-				{
-					"name": "createUser",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"\",\r\n    \"email\": \"\",\r\n    \"phone\": \"\",\r\n    \"password\": \"\",\r\n    \"passwordConfirmation\": \"\",\r\n    \"role\" : \"\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/api/v1/admin",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"admin"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "getAllUsers",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/api/v1/admin",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"admin"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "2",
-									"disabled": true
-								},
-								{
-									"key": "limit",
-									"value": "1",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "getSpecificUser",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/api/v1/admin/6782ceb5ee2a02fc75cf72b1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"admin",
-								"6782ceb5ee2a02fc75cf72b1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "updateUser",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"url": {
-							"raw": "http://localhost:3000/api/v1/admin/6787816668730d28fe99332f",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"admin",
-								"6787816668730d28fe99332f"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "changePassword",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"\",\r\n    \"currentPassword\":\"\",\r\n    \"newPassword\":\"\",\r\n    \"newPasswordConfirm\":\"\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/api/v1/admin/changePassword",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"admin",
-								"changePassword"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "deleteUser",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/api/v1/admin/6782d183c2a004b8af7c8eda",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"admin",
-								"6782d183c2a004b8af7c8eda"
 							]
 						}
 					},
@@ -1105,12 +1497,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/coupons",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/coupons",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1136,12 +1526,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/coupons?page=1&limit=4",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/coupons?page=1&limit=4",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1172,12 +1560,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/coupons/679349c52230394243537033",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/coupons/679349c52230394243537033",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1213,12 +1599,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/coupons/679349c52230394243537733",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/coupons/679349c52230394243537733",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1245,12 +1629,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/coupons/67934b25c9e3edaeb190164c",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/coupons/67934b25c9e3edaeb190164c",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1291,12 +1673,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/addresses",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/addresses",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1322,12 +1702,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/addresses",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/addresses",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1370,12 +1748,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/addresses/678feb3aea961af58ec950aa",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/addresses/678feb3aea961af58ec950aa",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1416,12 +1792,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/wishlists",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/wishlists",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1447,12 +1821,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/wishlists/",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/wishlists/",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1496,12 +1868,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/67719a5bbb06e77643564b78",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/67719a5bbb06e77643564b78",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1541,12 +1911,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/reviews",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/reviews",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1562,12 +1930,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/reviews",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/reviews",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1600,12 +1966,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/67875841f7e983b60811feb5",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/67875841f7e983b60811feb5",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1640,12 +2004,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/678e97f53952c4bb7c830bb3",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/678e97f53952c4bb7c830bb3",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1671,12 +2033,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/678e97f53952c4bb7c830bb3",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/678e97f53952c4bb7c830bb3",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1697,12 +2057,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/products/67719a5bbb06e77643564b7c/reviews?page=1&limit=10",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/products/67719a5bbb06e77643564b7c/reviews?page=1&limit=10",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1749,12 +2107,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/products/67719a5bbb06e77643564b7c/reviews",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/products/67719a5bbb06e77643564b7c/reviews",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1787,12 +2143,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/carts/",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/carts/",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1837,7 +2191,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"productId\":\"679868cc96698d640e58133c\",\r\n    \"color\":\"white\"\r\n}",
+							"raw": "{\r\n    \"productId\":\"681807f179e2a1274d8149e5\",\r\n    \"color\":\"white\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1845,12 +2199,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/carts",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/carts",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1885,12 +2237,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/carts/67aad97ed4570b6f2ae1ca90",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/carts/67aad97ed4570b6f2ae1ca90",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1926,12 +2276,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/carts/applyCoupon",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/carts/applyCoupon",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1958,12 +2306,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/carts/6794b6eb7739fad43a182781",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/carts/6794b6eb7739fad43a182781",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
@@ -1990,16 +2336,339 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/carts",
-							"protocol": "http",
+							"raw": "{{mainHost}}/api/v1/carts",
 							"host": [
-								"localhost"
+								"{{mainHost}}"
 							],
-							"port": "3000",
 							"path": [
 								"api",
 								"v1",
 								"carts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "createCashOrder",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mainHost}}/api/v1/orders/682c9131fe7e2871aae7fde1",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"682c9131fe7e2871aae7fde1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "checkOutSession",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mainHost}}/api/v1/orders/checkout-session/682cd6a8a04dfffd03da9e01",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"checkout-session",
+								"682cd6a8a04dfffd03da9e01"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllOrders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/orders",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "keyword",
+									"value": "plein",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateOrderStatus",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isPaid\":\"true\",\r\n    \"status\":\"delivered\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mainHost}}/api/v1/orders/67aa43fd255f7e5b368941ed",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"67aa43fd255f7e5b368941ed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteOrder",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/orders/67aa43e8255f7e5b368941d5",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"67aa43e8255f7e5b368941d5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Settings",
+			"item": [
+				{
+					"name": "addSetting",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"key\": \"taxes\",\r\n    \"value\": 14\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mainHost}}/api/v1/settings",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSettings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mainHost}}/api/v1/settings",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"settings"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateSettings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"value\": 14\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mainHost}}/api/v1/settings/67a5a46fc90afb90219c81fe",
+							"host": [
+								"{{mainHost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"settings",
+								"67a5a46fc90afb90219c81fe"
 							]
 						}
 					},
