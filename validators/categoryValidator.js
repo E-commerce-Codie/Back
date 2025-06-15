@@ -2,7 +2,7 @@ const { check } = require("express-validator");
 const slugify = require("slugify");
 const validatorMiddleWare = require("../middleWares/validatorMiddleware");
 const asyncHandler = require("express-async-handler");
-const categoryController = require("../Controller/categoryController");
+const categoryController = require("../controller/categoryController");
 const categoryModel = require("../models/categoryModel");
 
 exports.getCategoryValidator = [

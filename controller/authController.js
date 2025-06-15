@@ -1,4 +1,5 @@
 const dotenv = require("dotenv");
+const { OAuth2Client } = require("google-auth-library");
 const JWT = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const crypto = require("crypto");
@@ -54,6 +55,47 @@ exports.signUp = asyncHandler(async (req, res, next) => {
   res.status(201).json({ data: sanitize.sanitizeUser(user), token });
 });
 
+exports.googleAuth = asyncHandler(async (req, res, next) => {
+  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+  const { idToken } = req.body;
+
+  const ticket = await client.verifyIdToken({
+    idToken,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+  const { email, name, sub: googleId } = payload;
+
+  if (!email || !googleId) {
+    return next(new ApiError("Invalid Google token", 400));
+  }
+
+  let user = await userModel.findOne({ email });
+
+  if (user && !user.googleId) {
+    return next(
+      new ApiError(
+        "Email already used with password. Please login manually.",
+        400
+      )
+    );
+  }
+
+  if (!user) {
+    user = await userModel.create({
+      name,
+      email,
+      googleId,
+      active: true,
+    });
+  }
+
+  const token = createToken(user._id);
+
+  res.status(200).json({ data: sanitize.sanitizeUser(user), token });
+});
+
 exports.verify2FA = asyncHandler(async (req, res, next) => {
   const { email, OTP } = req.body;
 
@@ -85,6 +127,43 @@ exports.verify2FA = asyncHandler(async (req, res, next) => {
   await user.save();
 
   res.status(200).json({ data: sanitize.sanitizeUser(user), token });
+});
+
+exports.resend2FACode = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+
+  const user = await userModel.findOne({ email });
+
+  if (!user) {
+    return next(new ApiError("User not found.", 404));
+  }
+
+  if (user.active === false) {
+    return next(
+      new ApiError(
+        "Your account is not active, please contact the administrator.",
+        403
+      )
+    );
+  }
+
+  const OTP = crypto.randomInt(100000, 999999);
+
+  user.twoFactorCode = OTP;
+  user.twoFactorExpires = Date.now() + 5 * 60 * 1000;
+  await user.save();
+
+  const options = {
+    email: user.email,
+    subject: "Your new 2FA Code",
+    message: `Your new verification code is ${OTP}. It will expire in 5 minutes.`,
+  };
+
+  await sendEmails(options);
+
+  res.status(200).json({
+    message: "New verification code has been sent to your email.",
+  });
 });
 
 exports.protect = asyncHandler(async (req, res, next) => {

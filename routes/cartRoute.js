@@ -2,9 +2,9 @@ const express = require("express");
 
 const router = express.Router();
 
-const cartController = require("../Controller/cartController");
+const cartController = require("../controller/cartController");
 const cartValidator = require("../validators/cartValidator");
-const authController = require("../Controller/authController");
+const authController = require("../controller/authController");
 
 router
   .route("/")

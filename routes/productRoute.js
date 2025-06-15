@@ -1,9 +1,9 @@
 const express = require("express");
-const productController = require("../Controller/productController");
+const productController = require("../controller/productController");
 
 const router = express.Router();
 const productValidator = require("../validators/productValidator");
-const authController = require("../Controller/authController");
+const authController = require("../controller/authController");
 const reviewRoute = require("./reviewRoute");
 
 router.use("/:productId/reviews", reviewRoute);

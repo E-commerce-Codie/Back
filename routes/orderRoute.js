@@ -1,8 +1,10 @@
 const express = require("express");
-const orderController = require("../Controller/orderController");
+const orderController = require("../controller/orderController");
 
 const router = express.Router();
-const authController = require("../Controller/authController");
+const authController = require("../controller/authController");
+
+router.route("/webhook-paymob").post(orderController.webhookCheckout);
 
 router
   .route("/")

@@ -2,9 +2,9 @@ const express = require("express");
 
 const router = express.Router();
 
-const couponController = require("../Controller/couponController");
+const couponController = require("../controller/couponController");
 const couponValidator = require("../validators/couponValidator");
-const authController = require("../Controller/authController");
+const authController = require("../controller/authController");
 
 router
   .route("/")

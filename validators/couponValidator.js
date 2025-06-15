@@ -1,6 +1,6 @@
 const { check } = require("express-validator");
 const moment = require("moment");
-const validatorMiddleWare = require("../middlewares/validatorMiddleware");
+const validatorMiddleWare = require("../middleWares/validatorMiddleware");
 const asyncHandler = require("express-async-handler");
 const couponModel = require("../models/couponModel");
 

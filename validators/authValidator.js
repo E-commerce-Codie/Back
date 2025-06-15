@@ -9,16 +9,6 @@ exports.signUpValidator = [
   check("name")
     .notEmpty()
     .withMessage("User name is required")
-    .custom((value) =>
-      userModel.findOne({ name: value }).then((user) => {
-        if (user) {
-          return Promise.reject({
-            message: "Name already exists",
-            statusCode: 403,
-          });
-        }
-      })
-    )
     .isLength({ min: 3 })
     .withMessage("User name must be at least 3 characters")
     .isLength({ max: 32 })
@@ -40,7 +30,7 @@ exports.signUpValidator = [
         if (user) {
           return Promise.reject({
             message: "Email already exists",
-            statusCode: 403,
+            statusCode: 400,
           });
         }
       })
@@ -55,7 +45,7 @@ exports.signUpValidator = [
       if (password !== req.body.passwordConfirmation) {
         return Promise.reject({
           message: "Passwords do not match",
-          statusCode: 403,
+          statusCode: 400,
         });
       }
       return true;
@@ -88,14 +78,14 @@ exports.logInValidator = [
         if (!user) {
           return Promise.reject({
             message: "E-Mail or password is wrong",
-            statusCode: 403,
+            statusCode: 400,
           });
         }
         const isMatch = await bcrypt.compare(value, user.password);
         if (!isMatch) {
           return Promise.reject({
             message: "E-Mail or password is wrong",
-            statusCode: 403,
+            statusCode: 400,
           });
         }
         return true;
@@ -117,5 +107,15 @@ exports.verify2FA = [
     .isNumeric()
     .isLength({ min: 6, max: 6 })
     .withMessage("OTP must be a 6-digit number"),
+  validatorMiddleWare,
+];
+
+exports.resend2FA = [
+  check("email")
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Invalid email format"),
+
   validatorMiddleWare,
 ];

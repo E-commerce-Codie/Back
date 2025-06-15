@@ -1,9 +1,9 @@
 const express = require("express");
-const adminController = require("../Controller/adminController");
+const adminController = require("../controller/adminController");
 
 const router = express.Router();
 const adminValidator = require("../validators/adminValidator");
-const authController = require("../Controller/authController");
+const authController = require("../controller/authController");
 
 router.put(
   "/changePassword",

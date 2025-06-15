@@ -1,9 +1,9 @@
 const express = require("express");
-const userController = require("../Controller/userController");
+const userController = require("../controller/userController");
 
 const router = express.Router();
 const userValidator = require("../validators/userValidator");
-const authController = require("../Controller/authController");
+const authController = require("../controller/authController");
 
 router.get(
   "/getMyData",

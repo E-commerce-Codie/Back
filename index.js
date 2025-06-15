@@ -1,42 +1,29 @@
-// Import required libraries
+// Load env vars
+require("dotenv").config({ path: "config.env" });
+
+// Core
 const express = require("express");
-const dotenv = require("dotenv");
 const morgan = require("morgan");
-const cors = require("cors");
+
+// Security & Performance
 const compression = require("compression");
-const mongoSanitize = require("express-mongo-sanitize");
+const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const hpp = require("hpp");
-const { body } = require("express-validator");
 
-// Load environment variables
-dotenv.config({ path: "config.env" });
-
-// Import files
-const controller = require("./controller/orderController");
+// Custom
 const dbConnection = require("./config/dataBase");
 const mountRoutes = require("./routes");
 const globalError = require("./middleWares/errorMiddleware");
 const ApiError = require("./utils/apiError");
 
-// Application setup
+// App
 const app = express();
-app.set("trust proxy", 1);
-
-//WebHook
-app.post(
-  "/webhook/paymob",
-  express.json({ type: "application/json" }),
-  controller.webhookCheckout
-);
-
-// Middlewares
-app.use(cors());
-app.use(compression());
 app.use(express.json({ limit: "50kb" }));
+app.set("trust proxy", 1);
+app.use(cors());
 
 // Security Middlewares
-// app.use(mongoSanitize());
 app.use(
   hpp({
     whitelist: [
@@ -48,46 +35,52 @@ app.use(
     ],
   })
 );
+
+// Rate limiter
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 50,
-  message: "Too many requests from this IP, please try again after 15 minutes.",
+  message: {
+    status: "fail",
+    message: "Too many requests from this IP, please try again later.",
+  },
 });
 app.use("/api", limiter);
-
-// Connect to MongoDB
-dbConnection();
+app.use(compression());
 
 // Logger
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-// Validation example middleware (if needed globally)
-app.use([body("*").trim().escape()]);
+// Connect DB
+dbConnection();
 
-// Mount Routes
+// Routes
 mountRoutes(app);
 
-// Handle unmatched routes
+// Not Found Handler
 app.use((req, res, next) => {
   next(new ApiError(`Can not find this route: ${req.originalUrl}`, 404));
 });
 
-// Global Error Handling Middleware
+// Global Error Handler
 app.use(globalError);
 
-// Server setup
+// Server
 const PORT = process.env.PORT || 8000;
 const server = app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
+  console.log(`Server running on port: ${PORT}`);
 });
 
-// Handle unhandled promise rejections
+// Unhandled Rejections
 process.on("unhandledRejection", (err) => {
   console.error(`Unhandled Rejection: ${err.stack}`);
-  server.close(() => {
-    console.log("Shutting down...");
-    process.exit(1);
-  });
+  server.close(() => process.exit(1));
+});
+
+// Uncaught Exceptions
+process.on("uncaughtException", (err) => {
+  console.error(`Uncaught Exception: ${err.stack}`);
+  process.exit(1);
 });

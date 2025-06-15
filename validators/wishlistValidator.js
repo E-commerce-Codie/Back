@@ -1,5 +1,5 @@
 const { check } = require("express-validator");
-const validatorMiddleWare = require("../middlewares/validatorMiddleware");
+const validatorMiddleWare = require("../middleWares/validatorMiddleware");
 const productModel = require("../models/productModel");
 
 exports.addProductToWishlistValidator = [

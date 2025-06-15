@@ -3,7 +3,7 @@ const slugify = require("slugify");
 const bcrypt = require("bcryptjs");
 const validatorMiddleWare = require("../middleWares/validatorMiddleware");
 const asyncHandler = require("express-async-handler");
-const userController = require("../Controller/userController");
+const userController = require("../controller/userController");
 const userModel = require("../models/userModel");
 
 exports.getUserValidator = [
@@ -12,20 +12,8 @@ exports.getUserValidator = [
 ];
 
 exports.createUserValidator = [
-  userController.uploadUserImage,
   check("name")
     .notEmpty()
-    .withMessage("User name is required")
-    .custom((value) =>
-      userModel.findOne({ name: value }).then((user) => {
-        if (user) {
-          return Promise.reject({
-            message: `name already exists`,
-            statusCode: 404,
-          });
-        }
-      })
-    )
     .isLength({ min: 3 })
     .withMessage("User name must be at least 3 characters")
     .isLength({ max: 32 })
@@ -47,7 +35,7 @@ exports.createUserValidator = [
         if (user) {
           return Promise.reject({
             message: `E-Mail already exists`,
-            statusCode: 404,
+            statusCode: 400,
           });
         }
       })
@@ -62,7 +50,7 @@ exports.createUserValidator = [
       if (password !== req.body.passwordConfirmation) {
         return Promise.reject({
           message: "Passwords do not match",
-          statusCode: 404,
+          statusCode: 400,
         });
       }
       return true;
@@ -83,7 +71,6 @@ exports.createUserValidator = [
 ];
 
 exports.updateUserValidator = [
-  userController.uploadUserImage,
   check("id")
     .isMongoId()
     .withMessage("Invalid User Id Format")
@@ -94,7 +81,7 @@ exports.updateUserValidator = [
         if (!exists) {
           return Promise.reject({
             message: `No document For This Id: ${documentId}`,
-            statusCode: 404,
+            statusCode: 400,
           });
         }
         return true;
@@ -103,16 +90,6 @@ exports.updateUserValidator = [
 
   check("name")
     .optional()
-    .custom((value) =>
-      userModel.findOne({ name: value }).then((user) => {
-        if (user) {
-          return Promise.reject({
-            message: `Name already exists`,
-            statusCode: 404,
-          });
-        }
-      })
-    )
     .isLength({ min: 3 })
     .withMessage("User name must be at least 3 characters")
     .isLength({ max: 32 })
@@ -133,7 +110,7 @@ exports.updateUserValidator = [
         if (user) {
           return Promise.reject({
             message: `E-Mail already exists`,
-            statusCode: 404,
+            statusCode: 400,
           });
         }
       })
@@ -159,14 +136,14 @@ exports.changePasswordValidator = [
         if (!user) {
           return Promise.reject({
             message: `E-Mail or password is wrong`,
-            statusCode: 404,
+            statusCode: 400,
           });
         }
         const isMatch = await bcrypt.compare(value, user.password);
         if (!isMatch) {
           return Promise.reject({
             message: `E-Mail or password is wrong`,
-            statusCode: 404,
+            statusCode: 400,
           });
         }
         return true;
@@ -182,7 +159,7 @@ exports.changePasswordValidator = [
       if (newPassword !== req.body.newPasswordConfirm) {
         return Promise.reject({
           message: `Passwords do not match`,
-          statusCode: 404,
+          statusCode: 400,
         });
       }
       return true;

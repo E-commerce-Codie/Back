@@ -1,9 +1,9 @@
 const express = require("express");
-const wishlistController = require("../Controller/wishlistController");
+const wishlistController = require("../controller/wishlistController");
 
 const router = express.Router();
 const wishlistValidator = require("../validators/wishlistValidator");
-const authController = require("../Controller/authController");
+const authController = require("../controller/authController");
 
 router
   .route("/")

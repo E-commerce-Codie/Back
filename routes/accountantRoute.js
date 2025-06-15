@@ -1,4 +1,3 @@
-// routes/accountantRoutes.js
 const express = require("express");
 const {
   getAllCommissionRequests,
@@ -8,7 +7,7 @@ const {
   getAffiliatesCommissionReport,
 } = require("../controller/accountantController");
 
-const authController = require("../Controller/authController");
+const authController = require("../controller/authController");
 const router = express.Router();
 
 router.get(

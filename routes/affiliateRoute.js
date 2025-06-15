@@ -7,7 +7,7 @@ const {
   trackReferralClick,
   requestCommissionPayout,
 } = require("../controller/affiliateController");
-const authController = require("../Controller/authController");
+const authController = require("../controller/authController");
 const router = express.Router();
 
 router.post(

@@ -43,9 +43,9 @@ exports.createCashOrder = asyncHandler(async (req, res, next) => {
 });
 
 const createCreditOrder = async (paymentData) => {
-  const paymobOrderId = paymentData.order;
-  const email = paymentData.email || paymentData.billing_data?.email;
-  const address = paymentData.billing_data || {};
+  const paymobOrderId = paymentData.order.id;
+  const email = paymentData.order.shipping_data.email;
+  const address = paymentData.order.shipping_data;
 
   const cart = await cartModel.findOne({ paymobOrderId });
   if (!cart) throw new Error("❌ Cart not found for this Paymob order");
@@ -173,8 +173,7 @@ exports.webhookCheckout = asyncHandler(async (req, res, next) => {
   if (
     event.type === "TRANSACTION" &&
     event.obj.success === true &&
-    event.obj.is_auth === true &&
-    event.obj.is_capture === true
+    event.obj.order?.payment_status === "PAID"
   ) {
     const paymentData = event.obj;
 
@@ -182,15 +181,20 @@ exports.webhookCheckout = asyncHandler(async (req, res, next) => {
       await createCreditOrder(paymentData);
       console.log(
         `✅ Paymob Payment successful for Order ID ${
-          paymentData.order
+          paymentData.order.id
         } – Amount: ${paymentData.amount_cents / 100} EGP`
       );
     } catch (err) {
       console.error("❌ Failed to create order from Paymob webhook:", err);
       return res.status(500).send("Server Error");
     }
+  } else if (event.type !== "TRANSACTION") {
+    console.log(
+      `ℹ️ Received event type '${event.type}' - Ignored for order creation`
+    );
   } else {
     console.log("❌ Unsuccessful or irrelevant Paymob transaction");
+    console.log("Received Event:", JSON.stringify(event, null, 2));
   }
 
   res.status(200).send("Received");

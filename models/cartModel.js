@@ -30,6 +30,11 @@ const cartSchema = new mongoose.Schema(
     totalPriceAfterDiscount: {
       type: Number,
     },
+    paymobOrderId: {
+      type: String,
+      required: false,
+      unique: true,
+    },
   },
   {
     timestamps: true,

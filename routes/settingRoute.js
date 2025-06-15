@@ -2,8 +2,8 @@ const express = require("express");
 
 const router = express.Router();
 
-const settingController = require("../Controller/settingController");
-const authController = require("../Controller/authController");
+const settingController = require("../controller/settingController");
+const authController = require("../controller/authController");
 
 router
   .route("/")

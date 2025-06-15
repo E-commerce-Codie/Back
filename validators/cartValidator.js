@@ -1,5 +1,5 @@
 const { check } = require("express-validator");
-const validatorMiddleWare = require("../middlewares/validatorMiddleware");
+const validatorMiddleWare = require("../middleWares/validatorMiddleware");
 
 exports.addProductToCartValidator = [
   check("productId").isMongoId().withMessage("Invalid productId Format"),
