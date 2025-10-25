@@ -22,15 +22,15 @@
 // module.exports = sendEmails;
 // normal way for backend real not Vercel or Netlify serverless functions
 
-import { Resend } from 'resend';
+const { Resend } = require('resend');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmails = async (options) => {
   try {
     const data = await resend.emails.send({
-      from: process.env.EMAIL_FROM, // Example: 'Codie <onboarding@resend.dev>'
-      to: options.email,            // e.g. "user@example.com"
+      from: process.env.EMAIL_FROM,  // e.g. "Codie <onboarding@resend.dev>"
+      to: options.email,
       subject: options.subject,
       text: options.message,
     });
@@ -41,4 +41,4 @@ const sendEmails = async (options) => {
   }
 };
 
-export default sendEmails;
+module.exports = sendEmails;
