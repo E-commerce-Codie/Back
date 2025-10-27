@@ -3,6 +3,7 @@ const { OAuth2Client } = require("google-auth-library");
 const JWT = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 const createToken = require("../utils/createToken");
 const sanitize = require("../utils/sanitizeData");
 const sendEmails = require("../utils/sendEmail");
@@ -14,9 +15,13 @@ dotenv.config({ path: "config.env" });
 exports.logIn = asyncHandler(async (req, res, next) => {
   const user = await userModel
     .findOne({ email: req.body.email })
-    .select("-password");
+    .select("+password");
 
-  if (user.active == false) {
+  if (!user) {
+    return next(new ApiError("E-Mail or password is wrong", 400));
+  }
+
+  if (user.active === false) {
     return next(
       new ApiError(
         "Your account is not active, please contact the administrator.",
@@ -25,23 +30,19 @@ exports.logIn = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const OTP = crypto.randomInt(100000, 999999);
+  const isPasswordValid = await bcrypt.compare(
+    req.body.password,
+    user.password || ""
+  );
 
-  user.twoFactorCode = OTP;
-  user.twoFactorExpires = Date.now() + 5 * 60 * 1000;
-  await user.save();
+  if (!isPasswordValid) {
+    return next(new ApiError("E-Mail or password is wrong", 400));
+  }
 
-  const options = {
-    email: user.email,
-    subject: "Your 2FA Code",
-    message: `Your verification code is ${OTP}. It will expire in 5 minutes.`,
-  };
+  const token = createToken(user._id);
+  user.password = undefined;
 
-  await sendEmails(options);
-
-  res.status(200).json({
-    message: "Please check your email for the verification code.",
-  });
+  res.status(200).json({ data: sanitize.sanitizeUser(user), token });
 });
 
 exports.signUp = asyncHandler(async (req, res, next) => {
@@ -50,9 +51,26 @@ exports.signUp = asyncHandler(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     phone: req.body.phone,
+    active: false,
   });
-  const token = createToken(user._id);
-  res.status(201).json({ data: sanitize.sanitizeUser(user), token });
+  const OTP = crypto.randomInt(100000, 999999);
+
+  user.twoFactorCode = OTP;
+  user.twoFactorExpires = Date.now() + 5 * 60 * 1000;
+  await user.save();
+
+  const options = {
+    email: user.email,
+    subject: "Verify your account",
+    message: `Your verification code is ${OTP}. It will expire in 5 minutes.`,
+  };
+
+  await sendEmails(options);
+
+  res.status(201).json({
+    message: "Please verify your email address using the received code.",
+    data: sanitize.sanitizeUser(user),
+  });
 });
 
 exports.googleAuth = asyncHandler(async (req, res, next) => {
@@ -124,6 +142,7 @@ exports.verify2FA = asyncHandler(async (req, res, next) => {
 
   user.twoFactorCode = undefined;
   user.twoFactorExpires = undefined;
+  user.active = true;
   await user.save();
 
   res.status(200).json({ data: sanitize.sanitizeUser(user), token });
@@ -138,7 +157,7 @@ exports.resend2FACode = asyncHandler(async (req, res, next) => {
     return next(new ApiError("User not found.", 404));
   }
 
-  if (user.active === false) {
+  if (user.active === false && user.twoFactorCode == null) {
     return next(
       new ApiError(
         "Your account is not active, please contact the administrator.",

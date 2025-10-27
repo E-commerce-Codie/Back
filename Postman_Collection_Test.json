@@ -16,9 +16,11 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"let response = pm.response.json();\r",
-									"let token = response.token;\r",
-									"pm.environment.set(\"JWT\", token)"
+									"const response = pm.response.json();\r",
+									"pm.test(\"Signup response includes verification message\", function () {\r",
+									"    pm.expect(response).to.have.property(\"message\");\r",
+									"    pm.expect(response.token).to.be.undefined;\r",
+									"});\r"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -188,9 +190,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"let response = pm.response.json();\r",
-									"let token = response.token;\r",
-									"pm.environment.set(\"JWT\", token)"
+									"const response = pm.response.json();\r",
+									"pm.test(\"Resend 2FA returns confirmation message\", function () {\r",
+									"    pm.expect(response).to.have.property(\"message\");\r",
+									"});\r"
 								],
 								"type": "text/javascript",
 								"packages": {}
